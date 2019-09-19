@@ -1,19 +1,18 @@
 {
   "name": "sol-proxy",
   "description": "A tool for making any Solidity contract into a proxy contract, per EIP 1822.",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "main": "lib/index.js",
   "author": "pi0neerpat",
   "repository": "pi0neerpat/sol-proxy",
   "license": "GPL-3.0",
   "bin": "./bin/sol-proxy",
   "scripts": {
-    "start": "npm run compile && npm run test",
+    "test": "npm run compile && npm run test",
     "compile": "babel src --out-dir lib",
-    "test": "sol-proxy create contracts/flat.sol",
+    "create": "sol-proxy create contracts/flat.sol",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "prepare": "npm run compile",
-    "prettier-storage": "prettier --write **/Storage.sol"
+    "prepare": "npm run compile"
   },
   "devDependencies": {
     "babel-cli": "*",

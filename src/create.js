@@ -30,7 +30,7 @@ export function create(file) {
       const imports = node.symbolAliases.map(alias => {
         return alias[0];
       });
-      console.log(`import {${imports}} from "${node.path}";`);
+      // console.log(`import {${imports}} from "${node.path}";`);
       imports_output += `\nimport {${imports}} from "${node.path}";`;
     },
 

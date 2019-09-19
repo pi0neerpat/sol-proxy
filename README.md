@@ -14,25 +14,44 @@ Install it via npm:
 npm install -g sol-proxy
 ```
 
-## Command List
+## Usage
 
-### create
+### 1. Create `Storage.sol`
 
-The `create` command turns a contract into a proxy.
-
-```shell
-sol-proxy create MyContract.sol
-```
-
-<img src="https://" width="336" height="236">
-
-### update
-
-The `update` command searches for new variables and adds them properly (e.g. append-only) to the storage contract.
+The `create` command generates `Storage.sol` which contains all the contract variables.
 
 ```shell
-sol-proxy update MyContract.sol
+sol-proxy create contracts/MyContract.sol
 ```
+
+>note: if you've already run this command, you will need to remove the `Storage.sol` import and the Storage inheritance in your contract. You will add this back at the end.
+
+### 2. Variable Ordering
+
+:warning: Ensure the variables have not been re-ordered from a previously deployed version of the contract. Failure to maintain variable ordering can permanently corrupt your deployed contract.
+
+Simply adjust the variables until they are in the correct order, with any **new variables added at the end**.
+
+:eyes: Get a few friends to double-check this.
+
+### 3. Cleanup
+
+1. Remove duplicate `pragma` declarations.
+2. Add necessary import statements.
+3. All structs should be removed from `Storage.sol`. If any of these structs are needed in `Storage.sol`, they must also be removed from their original contract and placed into a separate `Structs.sol`. If needed, import `Structs.sol` into `Storage.sol` and other dependent contracts.
+4. Add an import and inheritance for `Storage.sol` and `Proxiable.sol` to your contract.
+
+```solidity
+pragma solidity ^0.5.8;
+
+import {Storage} from "./Storage.sol";
+import {Proxiable} from "./Proxiable.sol";
+
+contract MyToken is Storage, Proxiable {
+  //...
+```
+
+Refer to [EIP 1822](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1822.md) to get a better understanding of using this Proxy.
 
 ## License
 
