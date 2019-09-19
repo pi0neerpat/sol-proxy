@@ -1,0 +1,34 @@
+#!/usr/bin/env node
+
+const { create, update } = require('../lib/index');
+
+require('yargs') // eslint-disable-line
+  .usage('$0 <cmd> [args]')
+  .command(
+    'create [file]',
+    'Create a proxy contract',
+    yargs => {
+      yargs.positional('file', {
+        describe: 'file to use',
+        type: 'string'
+      });
+    },
+    argv => {
+      create(argv.file);
+    }
+  )
+  .command(
+    'update [file]',
+    'Update an existing proxy contract with new variables',
+    yargs => {
+      yargs.positional('file', {
+        describe: 'file to use',
+        type: 'string'
+      });
+    },
+    argv => {
+      update(argv.file);
+    }
+  )
+  .help()
+  .version().argv;
