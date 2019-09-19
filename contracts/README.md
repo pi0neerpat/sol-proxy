@@ -35,3 +35,5 @@ Maybe can use [atom solc linter](https://atom.io/packages/atom-solidity-linter)?
 
 Solidity Parser is used in [Truffle Flattener](https://github.com/nomiclabs/truffle-flattener)
 [Prettier plugin](https://www.npmjs.com/package/prettier-plugin-solidity)
+
+Should use [Solidity Coverage](https://www.npmjs.com/package/solidity-coverage)?

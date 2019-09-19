@@ -1,4 +1,3 @@
-
 // File: openzeppelin-solidity/contracts/math/SafeMath.sol
 
 pragma solidity ^0.5.0;
@@ -28,7 +27,7 @@ library SafeMath {
      */
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
-        require(c >= a, "SafeMath: addition overflow");
+        require(c >= a, 'SafeMath: addition overflow');
 
         return c;
     }
@@ -43,7 +42,7 @@ library SafeMath {
      * - Subtraction cannot overflow.
      */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b <= a, "SafeMath: subtraction overflow");
+        require(b <= a, 'SafeMath: subtraction overflow');
         uint256 c = a - b;
 
         return c;
@@ -67,7 +66,7 @@ library SafeMath {
         }
 
         uint256 c = a * b;
-        require(c / a == b, "SafeMath: multiplication overflow");
+        require(c / a == b, 'SafeMath: multiplication overflow');
 
         return c;
     }
@@ -85,7 +84,7 @@ library SafeMath {
      */
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
         // Solidity only automatically asserts when dividing by 0
-        require(b > 0, "SafeMath: division by zero");
+        require(b > 0, 'SafeMath: division by zero');
         uint256 c = a / b;
         // assert(a == b * c + a % b); // There is no case in which this doesn't hold
 
@@ -104,7 +103,7 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b != 0, "SafeMath: modulo by zero");
+        require(b != 0, 'SafeMath: modulo by zero');
         return a % b;
     }
 }
@@ -125,12 +124,15 @@ pragma solidity ^0.5.0;
 contract Ownable {
     address private _owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+    event OwnershipTransferred(
+        address indexed previousOwner,
+        address indexed newOwner
+    );
 
     /**
      * @dev Initializes the contract setting the deployer as the initial owner.
      */
-    constructor () internal {
+    constructor() internal {
         _owner = msg.sender;
         emit OwnershipTransferred(address(0), _owner);
     }
@@ -146,7 +148,7 @@ contract Ownable {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(isOwner(), "Ownable: caller is not the owner");
+        require(isOwner(), 'Ownable: caller is not the owner');
         _;
     }
 
@@ -181,7 +183,10 @@ contract Ownable {
      * @dev Transfers ownership of the contract to a new account (`newOwner`).
      */
     function _transferOwnership(address newOwner) internal {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
+        require(
+            newOwner != address(0),
+            'Ownable: new owner is the zero address'
+        );
         emit OwnershipTransferred(_owner, newOwner);
         _owner = newOwner;
     }
@@ -207,7 +212,7 @@ contract ReentrancyGuard {
     /// @dev counter to allow mutex lock with only one SSTORE operation
     uint256 private _guardCounter;
 
-    constructor () internal {
+    constructor() internal {
         // The counter starts at one to prevent changing it from zero to a non-zero
         // value, which is a more expensive operation.
         _guardCounter = 1;
@@ -224,7 +229,10 @@ contract ReentrancyGuard {
         _guardCounter += 1;
         uint256 localCounter = _guardCounter;
         _;
-        require(localCounter == _guardCounter, "ReentrancyGuard: reentrant call");
+        require(
+            localCounter == _guardCounter,
+            'ReentrancyGuard: reentrant call'
+        );
     }
 }
 
@@ -254,7 +262,9 @@ interface IERC20 {
      *
      * Emits a `Transfer` event.
      */
-    function transfer(address recipient, uint256 amount) external returns (bool);
+    function transfer(address recipient, uint256 amount)
+        external
+        returns (bool);
 
     /**
      * @dev Returns the remaining number of tokens that `spender` will be
@@ -263,7 +273,10 @@ interface IERC20 {
      *
      * This value changes when `approve` or `transferFrom` are called.
      */
-    function allowance(address owner, address spender) external view returns (uint256);
+    function allowance(address owner, address spender)
+        external
+        view
+        returns (uint256);
 
     /**
      * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
@@ -290,7 +303,9 @@ interface IERC20 {
      *
      * Emits a `Transfer` event.
      */
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount)
+        external
+        returns (bool);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
@@ -304,7 +319,11 @@ interface IERC20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to `approve`. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 }
 
 // File: contracts/IAllocationStrategy.sol
@@ -318,7 +337,6 @@ pragma solidity ^0.5.8;
  *         - Sainv assets can be redeemed back to the underlying assets plus interest any time.
  */
 interface IAllocationStrategy {
-
     /**
      * @notice Underlying asset for the strategy
      * @return address Underlying asset address
@@ -362,16 +380,12 @@ interface IAllocationStrategy {
 pragma solidity ^0.5.8;
 pragma experimental ABIEncoderV2;
 
-
-
 /**
  * @notice RToken interface a ERC20 interface and one can mint new tokens by
  *      trasfering underlying token into the contract, configure _hats_ for
  *      addresses and pay earned interest in new _rTokens_.
  */
 contract IRToken is IERC20 {
-
-
     /**
      * @notice Global stats
      */
@@ -390,7 +404,6 @@ contract IRToken is IERC20 {
         uint256 cumulativeInterest;
     }
 
-
     ////////////////////////////////////////////////////////////////////////////
     // For external transactions
     ////////////////////////////////////////////////////////////////////////////
@@ -407,7 +420,9 @@ contract IRToken is IERC20 {
      * @param hatID The id of the selected Hat
      * @return uint 0=success, otherwise a failure
      */
-    function mintWithSelectedHat(uint256 mintAmount, uint256 hatID) external returns (bool);
+    function mintWithSelectedHat(uint256 mintAmount, uint256 hatID)
+        external
+        returns (bool);
 
     /**
      * @notice Sender supplies assets into the market and receives rTokens in exchange
@@ -416,9 +431,11 @@ contract IRToken is IERC20 {
      * @param proportions Relative proportions of benefits received by the recipients
      * @return uint 0=success, otherwise a failure
      */
-    function mintWithNewHat(uint256 mintAmount,
+    function mintWithNewHat(
+        uint256 mintAmount,
         address[] calldata recipients,
-        uint32[] calldata proportions) external returns (bool);
+        uint32[] calldata proportions
+    ) external returns (bool);
 
     /**
      * @notice Moves all tokens from the caller's account to `dst`.
@@ -449,7 +466,9 @@ contract IRToken is IERC20 {
      * @param redeemTokens The number of rTokens to redeem into underlying
      * @return uint 0=success, otherwise a failure
      */
-    function redeemAndTransfer(address redeemTo, uint256 redeemTokens) external returns (bool);
+    function redeemAndTransfer(address redeemTo, uint256 redeemTokens)
+        external
+        returns (bool);
 
     /**
      * @notice Sender redeems all rTokens in exchange for the underlying asset then immediately transfer them to a differen user
@@ -467,7 +486,8 @@ contract IRToken is IERC20 {
     function createHat(
         address[] calldata recipients,
         uint32[] calldata proportions,
-        bool doChangeHat) external returns (uint256 hatID);
+        bool doChangeHat
+    ) external returns (uint256 hatID);
 
     /**
      * @notice Change the hat for `msg.sender`
@@ -503,11 +523,14 @@ contract IRToken is IERC20 {
      * @return recipients Hat recipients
      * @return proportions Hat recipient's relative proportions
      */
-    function getHatByAddress(address owner) external view
+    function getHatByAddress(address owner)
+        external
+        view
         returns (
             uint256 hatID,
             address[] memory recipients,
-            uint32[] memory proportions);
+            uint32[] memory proportions
+        );
 
     /**
      * @notice Get the hat structure
@@ -515,17 +538,20 @@ contract IRToken is IERC20 {
      * @return recipients Hat recipients
      * @return proportions Hat recipient's relative proportions
      */
-    function getHatByID(uint256 hatID) external view
-        returns (
-            address[] memory recipients,
-            uint32[] memory proportions);
+    function getHatByID(uint256 hatID)
+        external
+        view
+        returns (address[] memory recipients, uint32[] memory proportions);
 
     /**
      * @notice Amount of saving assets given to the recipient along with the
      *         loans.
      * @param owner Account owner address
      */
-    function receivedSavingsOf(address owner) external view returns (uint256 amount);
+    function receivedSavingsOf(address owner)
+        external
+        view
+        returns (uint256 amount);
 
     /**
      * @notice Amount of token loaned to the recipient along with the savings
@@ -533,7 +559,10 @@ contract IRToken is IERC20 {
      * @param owner Account owner address
      * @return amount
      */
-    function receivedLoanOf(address owner) external view returns (uint256 amount);
+    function receivedLoanOf(address owner)
+        external
+        view
+        returns (uint256 amount);
 
     /**
      * @notice Get the current interest balance of the owner.
@@ -541,7 +570,10 @@ contract IRToken is IERC20 {
      * @param owner Account owner address
      * @return amount
      */
-    function interestPayableOf(address owner) external view returns (uint256 amount);
+    function interestPayableOf(address owner)
+        external
+        view
+        returns (uint256 amount);
 
     ////////////////////////////////////////////////////////////////////////////
     // statistics views
@@ -557,7 +589,10 @@ contract IRToken is IERC20 {
     * @return rAmount Balance in redeemable amount
     * @return sAmount Balance in native amount of the strategy
     */
-    function getSavingAssetBalance() external view returns (uint256 nAmount, uint256 sAmount);
+    function getSavingAssetBalance()
+        external
+        view
+        returns (uint256 nAmount, uint256 sAmount);
 
     /**
     * @notice Get global stats
@@ -570,7 +605,10 @@ contract IRToken is IERC20 {
     * @param owner Account owner address
     * @return account stats
     */
-    function getAccountStats(address owner) external view returns (AccountStats memory);
+    function getAccountStats(address owner)
+        external
+        view
+        returns (AccountStats memory);
 
     ////////////////////////////////////////////////////////////////////////////
     // admin functions
@@ -579,7 +617,8 @@ contract IRToken is IERC20 {
     * @notice Change allocation strategy for the contract instance
     * @param allocationStrategy Allocation strategy instance
     */
-    function changeAllocationStrategy(IAllocationStrategy allocationStrategy) external;
+    function changeAllocationStrategy(IAllocationStrategy allocationStrategy)
+        external;
 
     ////////////////////////////////////////////////////////////////////////////
     // Events
@@ -592,7 +631,11 @@ contract IRToken is IERC20 {
     /**
      * @notice Event emitted when tokens are redeemed
      */
-    event Redeem(address indexed redeemer, address indexed redeemTo, uint256 redeemAmount);
+    event Redeem(
+        address indexed redeemer,
+        address indexed redeemTo,
+        uint256 redeemAmount
+    );
 
     /**
      * @notice Event emitted when interest paid
@@ -615,20 +658,13 @@ contract IRToken is IERC20 {
 pragma solidity ^0.5.8;
 pragma experimental ABIEncoderV2;
 
-
-
-
-
-
 /**
  * @notice RToken an ERC20 token that is 1:1 redeemable to its underlying ERC20 token.
  */
 contract RToken is IRToken, Ownable, ReentrancyGuard {
-
     using SafeMath for uint256;
 
     uint256 public constant SELF_HAT_ID = uint256(int256(-1));
-
     uint32 constant PROPORTION_BASE = 0xFFFFFFFF;
 
     //
@@ -665,19 +701,19 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     /**
      * @notice EIP-20 token name for this token
      */
-    string public name = "Redeemable DAI (rDAI ethberlin)";
+    string public name = 'Redeemable DAI (rDAI ethberlin)';
 
     /**
      * @notice EIP-20 token symbol for this token
      */
-    string public symbol = "rDAItest";
+    string public symbol = 'rDAItest';
 
     /**
      * @notice EIP-20 token decimals for this token
      */
     uint256 public decimals = 18;
 
-     /**
+    /**
       * @notice Total number of tokens in circulation
       */
     uint256 public totalSupply;
@@ -696,7 +732,11 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      *
      * This value changes when `approve` or `transferFrom` are called.
      */
-    function allowance(address owner, address spender) external view returns (uint256) {
+    function allowance(address owner, address spender)
+        external
+        view
+        returns (uint256)
+    {
         return transferAllowances[owner][spender];
     }
 
@@ -729,7 +769,11 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      * Emits a `Transfer` event.
      * May also emit `InterestPaid` event.
      */
-    function transfer(address dst, uint256 amount) external nonReentrant returns (bool) {
+    function transfer(address dst, uint256 amount)
+        external
+        nonReentrant
+        returns (bool)
+    {
         return transferInternal(msg.sender, msg.sender, dst, amount);
     }
 
@@ -741,7 +785,11 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     }
 
     /// @dev IRToken.transferAllFrom implementation
-    function transferAllFrom(address src, address dst) external nonReentrant returns (bool) {
+    function transferAllFrom(address src, address dst)
+        external
+        nonReentrant
+        returns (bool)
+    {
         payInterestInternal(src);
         payInterestInternal(dst);
         return transferInternal(msg.sender, src, dst, accounts[src].rAmount);
@@ -756,7 +804,11 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      *
      * Emits a `Transfer` event.
      */
-    function transferFrom(address src, address dst, uint256 amount) external nonReentrant returns (bool) {
+    function transferFrom(address src, address dst, uint256 amount)
+        external
+        nonReentrant
+        returns (bool)
+    {
         return transferInternal(msg.sender, src, dst, amount);
     }
 
@@ -771,8 +823,12 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     }
 
     /// @dev IRToken.mintWithSelectedHat implementation
-    function mintWithSelectedHat(uint256 mintAmount, uint256 hatID) external nonReentrant returns (bool) {
-        require(hatID == SELF_HAT_ID || hatID < hats.length, "Invalid hat ID");
+    function mintWithSelectedHat(uint256 mintAmount, uint256 hatID)
+        external
+        nonReentrant
+        returns (bool)
+    {
+        require(hatID == SELF_HAT_ID || hatID < hats.length, 'Invalid hat ID');
         changeHatInternal(msg.sender, hatID);
         mintInternal(mintAmount);
         return true;
@@ -781,9 +837,11 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     /**
      * @dev IRToken.mintWithNewHat implementation
      */
-    function mintWithNewHat(uint256 mintAmount,
+    function mintWithNewHat(
+        uint256 mintAmount,
         address[] calldata recipients,
-        uint32[] calldata proportions) external nonReentrant returns (bool) {
+        uint32[] calldata proportions
+    ) external nonReentrant returns (bool) {
         uint256 hatID = createHatInternal(recipients, proportions);
         changeHatInternal(msg.sender, hatID);
 
@@ -812,7 +870,11 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     }
 
     /// @dev IRToken.redeemAndTransfer implementation
-    function redeemAndTransfer(address redeemTo, uint256 redeemTokens) external nonReentrant returns (bool) {
+    function redeemAndTransfer(address redeemTo, uint256 redeemTokens)
+        external
+        nonReentrant
+        returns (bool)
+    {
         address src = msg.sender;
         payInterestInternal(src);
         redeemInternal(redeemTo, redeemTokens);
@@ -820,18 +882,23 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     }
 
     /// @dev IRToken.redeemAndTransferAll implementation
-    function redeemAndTransferAll(address redeemTo) external nonReentrant returns (bool) {
+    function redeemAndTransferAll(address redeemTo)
+        external
+        nonReentrant
+        returns (bool)
+    {
         address src = msg.sender;
         payInterestInternal(src);
         redeemInternal(redeemTo, accounts[src].rAmount);
         return true;
     }
 
-     /// @dev IRToken.createHat implementation
+    /// @dev IRToken.createHat implementation
     function createHat(
         address[] calldata recipients,
         uint32[] calldata proportions,
-        bool doChangeHat) external nonReentrant returns (uint256 hatID) {
+        bool doChangeHat
+    ) external nonReentrant returns (uint256 hatID) {
         hatID = createHatInternal(recipients, proportions);
         if (doChangeHat) {
             changeHatInternal(msg.sender, hatID);
@@ -849,10 +916,15 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     }
 
     /// @dev IRToken.getHatByAddress implementation
-    function getHatByAddress(address owner) external view returns (
-        uint256 hatID,
-        address[] memory recipients,
-        uint32[] memory proportions) {
+    function getHatByAddress(address owner)
+        external
+        view
+        returns (
+            uint256 hatID,
+            address[] memory recipients,
+            uint32[] memory proportions
+        )
+    {
         hatID = accounts[owner].hatID;
         if (hatID != 0 && hatID != SELF_HAT_ID) {
             Hat memory hat = hats[hatID];
@@ -865,9 +937,11 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     }
 
     /// @dev IRToken.getHatByID implementation
-    function getHatByID(uint256 hatID) external view returns (
-        address[] memory recipients,
-        uint32[] memory proportions) {
+    function getHatByID(uint256 hatID)
+        external
+        view
+        returns (address[] memory recipients, uint32[] memory proportions)
+    {
         if (hatID != 0 && hatID != SELF_HAT_ID) {
             Hat memory hat = hats[hatID];
             recipients = hat.recipients;
@@ -879,23 +953,35 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     }
 
     /// @dev IRToken.receivedSavingsOf implementation
-    function receivedSavingsOf(address owner) external view returns (uint256 amount) {
+    function receivedSavingsOf(address owner)
+        external
+        view
+        returns (uint256 amount)
+    {
         Account storage account = accounts[owner];
-        uint256 rGross =
-            account.sInternalAmount
+        uint256 rGross = account
+            .sInternalAmount
             .mul(ias.exchangeRateStored())
             .div(savingAssetConversionRate); // the 1e18 decimals should be cancelled out
         return rGross;
     }
 
     /// @dev IRToken.receivedLoanOf implementation
-    function receivedLoanOf(address owner) external view returns (uint256 amount) {
+    function receivedLoanOf(address owner)
+        external
+        view
+        returns (uint256 amount)
+    {
         Account storage account = accounts[owner];
         return account.lDebt;
     }
 
     /// @dev IRToken.interestPayableOf implementation
-    function interestPayableOf(address owner) external view returns (uint256 amount) {
+    function interestPayableOf(address owner)
+        external
+        view
+        returns (uint256 amount)
+    {
         Account storage account = accounts[owner];
         return getInterestPayableOf(account);
     }
@@ -909,18 +995,22 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     /// @dev IRToken.getAccountStats implementation!1
     function getGlobalStats() external view returns (GlobalStats memory) {
         uint256 totalSavingsAmount;
-        totalSavingsAmount +=
-            savingAssetOrignalAmount
+        totalSavingsAmount += savingAssetOrignalAmount
             .mul(ias.exchangeRateStored())
-            .div(10 ** 18);
-        return GlobalStats({
-            totalSupply: totalSupply,
-            totalSavingsAmount: totalSavingsAmount
-        });
+            .div(10**18);
+        return
+            GlobalStats({
+                totalSupply: totalSupply,
+                totalSavingsAmount: totalSavingsAmount
+            });
     }
 
     /// @dev IRToken.getAccountStats implementation
-    function getAccountStats(address owner) external view returns (AccountStats memory) {
+    function getAccountStats(address owner)
+        external
+        view
+        returns (AccountStats memory)
+    {
         Account storage account = accounts[owner];
         return account.stats;
     }
@@ -931,17 +1021,25 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     }
 
     /// @dev IRToken.getSavingAssetBalance implementation
-    function getSavingAssetBalance() external view
-        returns (uint256 nAmount, uint256 sAmount) {
+    function getSavingAssetBalance()
+        external
+        view
+        returns (uint256 nAmount, uint256 sAmount)
+    {
         sAmount = savingAssetOrignalAmount;
-        nAmount = sAmount
-            .mul(ias.exchangeRateStored())
-            .div(10 ** 18);
+        nAmount = sAmount.mul(ias.exchangeRateStored()).div(10**18);
     }
 
     /// @dev IRToken.changeAllocationStrategy implementation
-    function changeAllocationStrategy(IAllocationStrategy allocationStrategy) external nonReentrant onlyOwner {
-        require(allocationStrategy.underlying() == address(token), "New strategy should have the same underlying asset");
+    function changeAllocationStrategy(IAllocationStrategy allocationStrategy)
+        external
+        nonReentrant
+        onlyOwner
+    {
+        require(
+            allocationStrategy.underlying() == address(token),
+            'New strategy should have the same underlying asset'
+        );
         IAllocationStrategy oldIas = ias;
         ias = allocationStrategy;
         // redeem everything from the old strategy
@@ -953,10 +1051,9 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
         // calculate new saving asset conversion rate
         // if new original saving asset is 2x in amount
         // then the conversion of internal amount should be also 2x
-        savingAssetConversionRate =
-            sOriginalCreated
-            .mul(10 ** 18)
-            .div(sOriginalBurned);
+        savingAssetConversionRate = sOriginalCreated.mul(10**18).div(
+            sOriginalBurned
+        );
     }
 
     //
@@ -976,7 +1073,7 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     ///      - It has 18 decimals
     ///      - It starts with value 1.
     ///      - Each strategy switching results a new conversion rate
-    uint256 private savingAssetConversionRate = 10 ** 18;
+    uint256 private savingAssetConversionRate = 10**18;
 
     /// @dev Saving assets exchange rate with
 
@@ -998,18 +1095,17 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
         /// @dev Redeemable token balance portion that is from interest payment
         uint256 rInterest;
         /// @dev Mapping of recipients and their amount of debt
-        mapping (address => uint256) lRecipients;
+        mapping(address => uint256) lRecipients;
         /// @dev Loan debt amount for the account
         uint256 lDebt;
         /// @dev Saving asset amount internal
         uint256 sInternalAmount;
-
         /// @dev Stats
         AccountStats stats;
     }
 
     /// @dev Account mapping
-    mapping (address => Account) private accounts;
+    mapping(address => Account) private accounts;
 
     /**
      * @dev Transfer `tokens` tokens from `src` to `dst` by `spender`
@@ -1020,13 +1116,21 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      * @param tokens The number of tokens to transfer
      * @return Whether or not the transfer succeeded
      */
-    function transferInternal(address spender, address src, address dst, uint256 tokens) internal returns (bool) {
-        require(src != dst, "src should not equal dst");
+    function transferInternal(
+        address spender,
+        address src,
+        address dst,
+        uint256 tokens
+    ) internal returns (bool) {
+        require(src != dst, 'src should not equal dst');
 
         // pay the interest before doing the transfer
         payInterestInternal(src);
 
-        require(accounts[src].rAmount >= tokens, "Not enough balance to transfer");
+        require(
+            accounts[src].rAmount >= tokens,
+            'Not enough balance to transfer'
+        );
 
         /* Get the allowance, infinite for the account owner */
         uint256 startingAllowance = 0;
@@ -1035,7 +1139,10 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
         } else {
             startingAllowance = transferAllowances[src][spender];
         }
-        require(startingAllowance >= tokens, "Not enough allowance for transfer");
+        require(
+            startingAllowance >= tokens,
+            'Not enough allowance for transfer'
+        );
 
         /* Do the calculations, checking for {under,over}flow */
         uint256 allowanceNew = startingAllowance.sub(tokens);
@@ -1060,7 +1167,10 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
         }
 
         // lRecipients adjustments
-        uint256 sInternalAmountCollected = estimateAndRecollectLoans(src, tokens);
+        uint256 sInternalAmountCollected = estimateAndRecollectLoans(
+            src,
+            tokens
+        );
         distributeLoans(dst, tokens, sInternalAmountCollected);
 
         // rInterest adjustment for src
@@ -1080,7 +1190,10 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      * @param mintAmount The amount of the underlying asset to supply
      */
     function mintInternal(uint256 mintAmount) internal {
-        require(token.allowance(msg.sender, address(this)) >= mintAmount, "Not enough allowance");
+        require(
+            token.allowance(msg.sender, address(this)) >= mintAmount,
+            'Not enough allowance'
+        );
 
         Account storage account = accounts[msg.sender];
 
@@ -1097,10 +1210,9 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
         savingAssetOrignalAmount += sOriginalCreated;
 
         // distribute saving assets as loans to recipients
-        uint256 sInternalCreated =
-            sOriginalCreated
+        uint256 sInternalCreated = sOriginalCreated
             .mul(savingAssetConversionRate)
-            .div(10 ** 18);
+            .div(10**18);
         distributeLoans(msg.sender, mintAmount, sInternalCreated);
 
         emit Mint(msg.sender, mintAmount);
@@ -1115,10 +1227,16 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      */
     function redeemInternal(address redeemTo, uint256 redeemAmount) internal {
         Account storage account = accounts[msg.sender];
-        require(redeemAmount > 0, "Redeem amount cannot be zero");
-        require(redeemAmount <= account.rAmount, "Not enough balance to redeem");
+        require(redeemAmount > 0, 'Redeem amount cannot be zero');
+        require(
+            redeemAmount <= account.rAmount,
+            'Not enough balance to redeem'
+        );
 
-        uint256 sOriginalBurned = redeemAndRecollectLoans(msg.sender, redeemAmount);
+        uint256 sOriginalBurned = redeemAndRecollectLoans(
+            msg.sender,
+            redeemAmount
+        );
 
         // update Account r balances and global statistics
         account.rAmount = account.rAmount.sub(redeemAmount);
@@ -1148,29 +1266,33 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      */
     function createHatInternal(
         address[] memory recipients,
-        uint32[] memory proportions) internal returns (uint256 hatID) {
-        uint i;
+        uint32[] memory proportions
+    ) internal returns (uint256 hatID) {
+        uint256 i;
 
-        require(recipients.length > 0, "Invalid hat: at least one recipient");
-        require(recipients.length == proportions.length, "Invalid hat: length not matching");
+        require(recipients.length > 0, 'Invalid hat: at least one recipient');
+        require(
+            recipients.length == proportions.length,
+            'Invalid hat: length not matching'
+        );
 
         // normalize the proportions
         uint256 totalProportions = 0;
         for (i = 0; i < recipients.length; ++i) {
-            require(proportions[i] > 0, "Invalid hat: proportion should be larger than 0");
+            require(
+                proportions[i] > 0,
+                'Invalid hat: proportion should be larger than 0'
+            );
             totalProportions += uint256(proportions[i]);
         }
         for (i = 0; i < proportions.length; ++i) {
             proportions[i] = uint32(
-                uint256(proportions[i])
-                * uint256(PROPORTION_BASE)
-                / totalProportions);
+                (uint256(proportions[i]) * uint256(PROPORTION_BASE)) /
+                    totalProportions
+            );
         }
 
-        hatID = hats.push(Hat(
-            recipients,
-            proportions
-        )) - 1;
+        hatID = hats.push(Hat(recipients, proportions)) - 1;
         emit HatCreated(hatID);
     }
 
@@ -1182,7 +1304,10 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     function changeHatInternal(address owner, uint256 hatID) internal {
         Account storage account = accounts[owner];
         if (account.rAmount > 0) {
-            uint256 sInternalAmountCollected = estimateAndRecollectLoans(owner, account.rAmount);
+            uint256 sInternalAmountCollected = estimateAndRecollectLoans(
+                owner,
+                account.rAmount
+            );
             account.hatID = hatID;
             distributeLoans(owner, account.rAmount, sInternalAmountCollected);
         } else {
@@ -1194,9 +1319,13 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
     /**
      * @dev Get interest payable of the account
      */
-    function getInterestPayableOf(Account storage account) internal view returns (uint256) {
-        uint256 rGross =
-            account.sInternalAmount
+    function getInterestPayableOf(Account storage account)
+        internal
+        view
+        returns (uint256)
+    {
+        uint256 rGross = account
+            .sInternalAmount
             .mul(ias.exchangeRateStored())
             .div(savingAssetConversionRate); // the 1e18 decimals should be cancelled out
         if (rGross > (account.lDebt + account.rInterest)) {
@@ -1217,13 +1346,16 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      * @param sInternalAmount Amount of saving assets (internal amount) being given to the recipients
      */
     function distributeLoans(
-            address owner,
-            uint256 rAmount,
-            uint256 sInternalAmount) internal {
+        address owner,
+        uint256 rAmount,
+        uint256 sInternalAmount
+    ) internal {
         Account storage account = accounts[owner];
-        Hat storage hat = hats[account.hatID == SELF_HAT_ID ? 0 : account.hatID];
+        Hat storage hat = hats[account.hatID == SELF_HAT_ID
+            ? 0
+            : account.hatID];
         bool[] memory recipientsNeedsNewHat = new bool[](hat.recipients.length);
-        uint i;
+        uint256 i;
         if (hat.recipients.length > 0) {
             uint256 rLeft = rAmount;
             uint256 sInternalLeft = sInternalAmount;
@@ -1236,11 +1368,12 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
                     recipientsNeedsNewHat[i] = true;
                 }
 
-                uint256 lDebtRecipient = isLastRecipient ? rLeft :
-                    rAmount
-                    * hat.proportions[i]
-                    / PROPORTION_BASE;
-                account.lRecipients[hat.recipients[i]] = account.lRecipients[hat.recipients[i]].add(lDebtRecipient);
+                uint256 lDebtRecipient = isLastRecipient
+                    ? rLeft
+                    : (rAmount * hat.proportions[i]) / PROPORTION_BASE;
+                account.lRecipients[hat.recipients[i]] = account.lRecipients[hat
+                    .recipients[i]]
+                    .add(lDebtRecipient);
                 recipient.lDebt = recipient.lDebt.add(lDebtRecipient);
                 // leftover adjustments
                 if (rLeft > lDebtRecipient) {
@@ -1249,11 +1382,12 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
                     rLeft = 0;
                 }
 
-                uint256 sInternalAmountRecipient = isLastRecipient ? sInternalLeft:
-                    sInternalAmount
-                    * hat.proportions[i]
-                    / PROPORTION_BASE;
-                recipient.sInternalAmount = recipient.sInternalAmount.add(sInternalAmountRecipient);
+                uint256 sInternalAmountRecipient = isLastRecipient
+                    ? sInternalLeft
+                    : (sInternalAmount * hat.proportions[i]) / PROPORTION_BASE;
+                recipient.sInternalAmount = recipient.sInternalAmount.add(
+                    sInternalAmountRecipient
+                );
                 // leftover adjustments
                 if (sInternalLeft >= sInternalAmountRecipient) {
                     sInternalLeft -= sInternalAmountRecipient;
@@ -1264,7 +1398,9 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
         } else {
             // Account uses the zero hat, give all interest to the owner
             account.lDebt = account.lDebt.add(rAmount);
-            account.sInternalAmount = account.sInternalAmount.add(sInternalAmount);
+            account.sInternalAmount = account.sInternalAmount.add(
+                sInternalAmount
+            );
         }
 
         // apply to new hat owners
@@ -1283,16 +1419,19 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      *                by giving back estimated amount of saving assets
      * @return Estimated amount of saving assets (internal) needs to recollected
      */
-    function estimateAndRecollectLoans(
-        address owner,
-        uint256 rAmount) internal returns (uint256 sInternalAmount) {
+    function estimateAndRecollectLoans(address owner, uint256 rAmount)
+        internal
+        returns (uint256 sInternalAmount)
+    {
         Account storage account = accounts[owner];
-        Hat storage hat = hats[account.hatID == SELF_HAT_ID ? 0 : account.hatID];
+        Hat storage hat = hats[account.hatID == SELF_HAT_ID
+            ? 0
+            : account.hatID];
         // accrue interest so estimate is up to date
         ias.accrueInterest();
-        sInternalAmount = rAmount
-            .mul(savingAssetConversionRate)
-            .div(ias.exchangeRateStored()); // the 1e18 decimals should be cancelled out
+        sInternalAmount = rAmount.mul(savingAssetConversionRate).div(
+            ias.exchangeRateStored()
+        ); // the 1e18 decimals should be cancelled out
         recollectLoans(account, hat, rAmount, sInternalAmount);
     }
 
@@ -1304,16 +1443,18 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
      *                by redeeming equivalent value of the saving assets
      * @return Amount of saving assets redeemed for rAmount of tokens.
      */
-    function redeemAndRecollectLoans(
-        address owner,
-        uint256 rAmount) internal returns (uint256 sOriginalBurned) {
+    function redeemAndRecollectLoans(address owner, uint256 rAmount)
+        internal
+        returns (uint256 sOriginalBurned)
+    {
         Account storage account = accounts[owner];
-        Hat storage hat = hats[account.hatID == SELF_HAT_ID ? 0 : account.hatID];
+        Hat storage hat = hats[account.hatID == SELF_HAT_ID
+            ? 0
+            : account.hatID];
         sOriginalBurned = ias.redeemUnderlying(rAmount);
-        uint256 sInternalBurned =
-            sOriginalBurned
+        uint256 sInternalBurned = sOriginalBurned
             .mul(savingAssetConversionRate)
-            .div(10 ** 18);
+            .div(10**18);
         recollectLoans(account, hat, rAmount, sInternalBurned);
     }
 
@@ -1328,8 +1469,9 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
         Account storage account,
         Hat storage hat,
         uint256 rAmount,
-        uint256 sInternalAmount) internal {
-        uint i;
+        uint256 sInternalAmount
+    ) internal {
+        uint256 i;
         if (hat.recipients.length > 0) {
             uint256 rLeft = rAmount;
             uint256 sInternalLeft = sInternalAmount;
@@ -1337,9 +1479,9 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
                 Account storage recipient = accounts[hat.recipients[i]];
                 bool isLastRecipient = i == (hat.proportions.length - 1);
 
-                uint256 lDebtRecipient = isLastRecipient ? rLeft: rAmount
-                    * hat.proportions[i]
-                    / PROPORTION_BASE;
+                uint256 lDebtRecipient = isLastRecipient
+                    ? rLeft
+                    : (rAmount * hat.proportions[i]) / PROPORTION_BASE;
                 if (recipient.lDebt > lDebtRecipient) {
                     recipient.lDebt -= lDebtRecipient;
                 } else {
@@ -1357,10 +1499,9 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
                     rLeft = 0;
                 }
 
-                uint256 sInternalAmountRecipient = isLastRecipient ? sInternalLeft:
-                    sInternalAmount
-                    * hat.proportions[i]
-                    / PROPORTION_BASE;
+                uint256 sInternalAmountRecipient = isLastRecipient
+                    ? sInternalLeft
+                    : (sInternalAmount * hat.proportions[i]) / PROPORTION_BASE;
                 if (recipient.sInternalAmount > sInternalAmountRecipient) {
                     recipient.sInternalAmount -= sInternalAmountRecipient;
                 } else {
@@ -1399,7 +1540,10 @@ contract RToken is IRToken, Ownable, ReentrancyGuard {
         uint256 interestAmount = getInterestPayableOf(account);
 
         if (interestAmount > 0) {
-            account.stats.cumulativeInterest = account.stats.cumulativeInterest.add(interestAmount);
+            account.stats.cumulativeInterest = account
+                .stats
+                .cumulativeInterest
+                .add(interestAmount);
             account.rInterest = account.rInterest.add(interestAmount);
             account.rAmount = account.rAmount.add(interestAmount);
             totalSupply = totalSupply.add(interestAmount);

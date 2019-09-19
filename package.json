@@ -10,9 +10,10 @@
   "scripts": {
     "start": "npm run compile && npm run test",
     "compile": "babel src --out-dir lib",
-    "test": "sol-proxy create contracts/RToken.sol",
+    "test": "sol-proxy create contracts/flat.sol",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "prepare": "npm run compile"
+    "prepare": "npm run compile",
+    "prettier-storage": "prettier --write **/Storage.sol"
   },
   "devDependencies": {
     "babel-cli": "*",
@@ -27,8 +28,9 @@
   "dependencies": {
     "c3-linearization": "^0.2.0",
     "colors": "^1.2.1",
-    "graphviz": "0.0.8",
     "npm": "^5.7.1",
+    "prettier": "^1.18.2",
+    "prettier-plugin-solidity": "^1.0.0-alpha.32",
     "solidity-parser-antlr": "^0.2.8",
     "solpp": "^0.10.2",
     "yargs": "^11.0.0"
