@@ -27,7 +27,7 @@
   "dependencies": {
     "c3-linearization": "^0.2.0",
     "colors": "^1.2.1",
-    "npm": "^5.7.1",
+    "npm": "^6.13.4",
     "prettier": "^1.18.2",
     "prettier-plugin-solidity": "^1.0.0-alpha.32",
     "solidity-parser-antlr": "^0.2.8",
